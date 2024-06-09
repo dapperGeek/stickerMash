@@ -8,38 +8,36 @@ import {useState} from "react";
 import CircleButton from "./components/CircleButton";
 import IconButton from "./components/IconButton";
 
-const PlaceholderImage = require("./assets/images/background-image.png");
-const [selectedImage, setSelectedImage] = useState(null)
-
-const pickImageAsync = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-        allowsEditing: true,
-        quality: 1,
-    });
-
-
-    if (!result.canceled) {
-        // console.log(result);
-        setSelectedImage(result.assets[0].uri);
-        setShowAppOptions(true);
-    }
-    else {
-        alert('You did not select an image.');
-    }
-};
-const onReset = () => {
-    setShowAppOptions(false);
-};
-const onAddSticker = () => {
-
-};
-const onSaveImageAsync = () => {
-
-}
-
-const [showAppOptions, setShowAppOptions] = useState(false);
-
 export default function App() {
+    const PlaceholderImage = require("./assets/images/background-image.png");
+    const [selectedImage, setSelectedImage] = useState(null)
+
+    const pickImageAsync = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            allowsEditing: true,
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            setSelectedImage(result.assets[0].uri);
+            setShowAppOptions(true);
+        }
+        else {
+            alert('You did not select an image.');
+        }
+    };
+    const onReset = () => {
+        setShowAppOptions(false);
+    };
+    const onAddSticker = () => {
+
+    };
+    const onSaveImageAsync = () => {
+
+    }
+
+    const [showAppOptions, setShowAppOptions] = useState(false);
+
     return (
         <View style={styles.container}>
             <View style={styles.imageContainer}>
@@ -56,7 +54,7 @@ export default function App() {
             ) : (
                 <View style={styles.footerContainer}>
                     <Button theme="primary" label="Choose a photo" onPress={pickImageAsync} />
-                    <Button label="Use this photo" onPress={setShowAppOptions(true)} />
+                    <Button label="Use this photo" onPress={() => setShowAppOptions(true)} />
                 </View>
             )}
             <StatusBar style="auto" />
