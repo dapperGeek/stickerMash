@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View} from "react-native";
+import { StyleSheet, View, Platform} from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import Button from './components/Button';
@@ -13,7 +13,7 @@ import EmojiList from "./components/EmojiList";
 import EmojiSticker from "./components/EmojiSticker";
 import * as MediaLibrary from "expo-media-library";
 import {captureRef} from "react-native-view-shot";
-import PlaceholderImage from "./assets/images/background-image.png";
+import domToImage from 'dom-to-image';
 
 export default function App() {
     const imageRef = useRef();
@@ -56,18 +56,37 @@ export default function App() {
 
     // takes a screenshot and saves to media library
     const onSaveImageAsync = async () => {
-        try {
-            const localUri = await captureRef(imageRef, {
-                height: 440,
-                quality: 1
-            });
+        if (Platform.OS !== 'web') {
+            try {
+                const localUri = await captureRef(imageRef, {
+                    height: 440,
+                    quality: 1
+                });
 
-            await MediaLibrary.saveToLibraryAsync(localUri);
-            if (localUri) {
-                alert("Saved");
+                await MediaLibrary.saveToLibraryAsync(localUri);
+                if (localUri) {
+                    alert("Saved");
+                }
+            }catch (e) {
+                console.log(e);
             }
-        }catch (e) {
-            console.log(e);
+        }
+        else {
+            try {
+                const dataUri = await domToImage.toJpeg(imageRef.current, {
+                    quality: 0.95,
+                    height: 440,
+                    width: 320
+                });
+
+                let link = document.createElement('a');
+                link.download = 'stickerMash.jpeg';
+                link.href = dataUri;
+                link.click();
+            }
+            catch (e) {
+                console.log(e);
+            }
         }
     }
 
